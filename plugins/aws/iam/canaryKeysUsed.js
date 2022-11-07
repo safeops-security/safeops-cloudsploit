@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Canary Keys Used',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Detects when a special canary-token access key has been used',
     more_info: 'Canary access keys can be created with limited permissions and then used to detect when a potential breach occurs.',
     link: 'https://docs.aws.amazon.com/IAM/latest/UserGuide/ManagingCredentials.html',
@@ -17,7 +18,20 @@ module.exports = {
             default: ''
         }
     },
-
+    //we need to check if (canary_user && access_key_1_last_used_date) || (canary_user && access_key_2_last_used_date) [SOP]
+    // canary_user && (access_key_1_last_used_date || access_key_2_last_used_date)
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'generateCredentialReport',
+                property: 'access_key_1_last_rotated',
+                transform: 'DAYSFROM',
+                op: 'GT',
+                value: 90
+            }
+        ]
+    },
     run: function(cache, settings, callback) {
         var config = {
             canary_user: settings.canary_user || this.settings.canary_user.default

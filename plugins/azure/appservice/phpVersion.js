@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/azure/');
 module.exports = {
     title: 'PHP Version',
     category: 'App Service',
+    domain: 'Application Integration',
     description: 'Ensures the latest version of PHP is installed for all App Services',
     more_info: 'Installing the latest version of PHP will reduce the security risk of missing security patches.',
     recommended_action: 'Select the latest version of PHP for all PHP-based App Services',
@@ -29,9 +30,8 @@ module.exports = {
         var locations = helpers.locations(settings.govcloud);
 
         async.each(locations.webApps, function(location, rcb) {
-            const webApps = helpers.addSource(
-                cache, source, ['webApps', 'list', location]
-            );
+            const webApps = helpers.addSource(cache, source,
+                ['webApps', 'list', location]);
 
             if (!webApps) return rcb();
 
@@ -54,15 +54,7 @@ module.exports = {
                     cache, source, ['webApps', 'listConfigurations', location, webApp.id]
                 );
 
-                if (helpers.checkAppVersions(
-                    webConfigs,
-                    results,
-                    location,
-                    webApp.id,
-                    'phpVersion',
-                    config.latestphpVersion,
-                    'PHP',
-                    custom)
+                if (helpers.checkAppVersions(webConfigs, results, location, webApp.id, 'phpVersion', config.latestPhpVersion, 'PHP', custom)
                 ) {
                     found = true;
                 }

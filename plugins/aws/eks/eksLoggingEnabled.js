@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'EKS Logging Enabled',
     category: 'EKS',
+    domain: 'Containers',
     description: 'Ensures all EKS cluster logs are being sent to CloudWatch',
     more_info: 'EKS supports routing of cluster event and audit logs to CloudWatch, including control plane logs. All logs should be sent to CloudWatch for security analysis.',
     link: 'https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html',
@@ -37,7 +38,7 @@ module.exports = {
                 return rcb();
             }
 
-            if(listClusters.data.length === 0){
+            if (listClusters.data.length === 0){
                 helpers.addResult(results, 0, 'No EKS clusters present', region);
                 return rcb();
             }

@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Certificate Expiry',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Detect upcoming expiration of certificates used with ELBs',
     more_info: 'Certificates that have expired will trigger warnings in all major browsers',
     link: 'http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/elb-update-ssl-cert.html',
@@ -21,6 +22,18 @@ module.exports = {
             regex: '^[1-9]{1}[0-9]{0,3}$',
             default: 30
         }
+    },
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'listServerCertificates',
+                property: 'Expiration',
+                transform: 'DAYSFROM',
+                op: 'GT',
+                value: 90
+            }
+        ]
     },
 
     run: function(cache, settings, callback) {

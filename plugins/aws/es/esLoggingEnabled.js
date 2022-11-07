@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'ElasticSearch Logging Enabled',
     category: 'ES',
+    domain: 'Databases',
     description: 'Ensures ElasticSearch domains are configured to log data to CloudWatch',
     more_info: 'ElasticSearch domains should be configured with logging enabled with logs sent to CloudWatch for analysis and long-term storage.',
     link: 'https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-slow-logs',
@@ -69,8 +70,7 @@ module.exports = {
                             let logStr = cloudWatchDisabled.join(', ').replace(/_/g, ' ');
                             helpers.addResult(results, 2,
                                 `ES domain logging is enabled but logs are not configured to be sent to CloudWatch for: ${logStr}`, region, localDomain.ARN);
-                        }
-                        else {
+                        } else {
                             let logStr = logSelectionArr.join(', ').replace(/_/g, ' ');
                             helpers.addResult(results, 2,
                                 `The following logs are not configured for the ES domain: ${logStr}`, region, localDomain.ARN);

@@ -1,7 +1,7 @@
 var AWS = require('aws-sdk');
 var async = require('async');
 
-module.exports = function(AWSConfig, collection, callback) {
+module.exports = function(AWSConfig, collection, retries, callback) {
     var iam = new AWS.IAM(AWSConfig);
 
     var generateCredentialReport = function(genCb) {
@@ -34,7 +34,7 @@ module.exports = function(AWSConfig, collection, callback) {
             try {
                 var csvContent = reportData.Content.toString();
                 var csvRows = csvContent.split('\n');
-            } catch(e) {
+            } catch (e) {
                 collection.iam.generateCredentialReport[AWSConfig.region].err = 'Error converting credential CSV to string: ' + e;
                 return callback();
             }

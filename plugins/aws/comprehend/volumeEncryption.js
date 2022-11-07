@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Amazon Comprehend Volume Encryption',
     category: 'Comprehend',
+    domain: 'Compute',
     description: 'Ensures the Comprehend service is using encryption for all volumes storing data at rest.',
     more_info: 'Comprehend supports using KMS keys to encrypt data at rest, which should be enabled.',
     link: 'https://docs.aws.amazon.com/comprehend/latest/dg/kms-in-comprehend.html',
@@ -25,7 +26,7 @@ module.exports = {
                         
                     if (!listEntitiesDetectionJobs) return lcb();
 
-                    if(listEntitiesDetectionJobs.err || !listEntitiesDetectionJobs.data) {
+                    if (listEntitiesDetectionJobs.err || !listEntitiesDetectionJobs.data) {
                         helpers.addResult(results, 3,
                             'Unable to query for entities detections jobs', region);
                         return lcb();

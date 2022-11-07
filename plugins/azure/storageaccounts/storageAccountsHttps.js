@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/azure');
 module.exports = {
     title: 'Storage Accounts HTTPS',
     category: 'Storage Accounts',
+    domain: 'Storage',
     description: 'Ensures HTTPS-only traffic is allowed to storage account endpoints',
     more_info: 'Storage Accounts can contain sensitive information and should only be accessed over HTTPS. Enabling the HTTPS-only flag ensures that Azure does not allow HTTP traffic to Storage Accounts.',
     recommended_action: 'Enable the HTTPS-only option for all Storage Accounts.',
@@ -14,6 +15,7 @@ module.exports = {
     apis_remediate: ['storageAccounts:list'],
     actions: {remediate:['storageAccounts:update'], rollback:['storageAccounts:update']},
     permissions: {remediate: ['storageAccounts:update'], rollback: ['storageAccounts:update']},
+    realtime_triggers: ['microsoftstorage:storageaccounts:write'],
     compliance: {
         hipaa: 'HIPAA requires all data to be transmitted over secure channels. ' +
                 'Storage Account HTTPS should be used to ensure all data access ' +
@@ -87,7 +89,9 @@ module.exports = {
         };
 
         helpers.remediatePlugin(config, method, body, baseUrl, resource, remediation_file, putCall, pluginName, function(err, action) {
-            action.action = putCall;
+            if (err) return callback(err);
+            if (action) action.action = putCall;
+
 
             remediation_file['post_remediate']['actions'][pluginName][resource] = action;
             remediation_file['remediate']['actions'][pluginName][resource] = {

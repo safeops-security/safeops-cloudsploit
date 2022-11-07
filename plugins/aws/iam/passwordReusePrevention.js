@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Password Reuse Prevention',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures password policy prevents previous password reuse',
     more_info: 'A strong password policy enforces minimum length, expirations, reuse, and symbol usage',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/Using_ManagingPasswordPolicies.html',
@@ -11,6 +12,20 @@ module.exports = {
     remediation_description: 'The password policy for password reuse prevention will be set to the value set by the user. Otherwise, it will default to 24.',
     remediation_min_version: '202006221808',
     apis_remediate: ['IAM:getAccountPasswordPolicy'],
+    remediation_inputs: {
+        maxPreviousPasswords: {
+            name: '(Optional) Minimum Previous Passwords',
+            description: 'The minimum number of previous passwords to allow in the account policy 1-24',
+            regex: '^([1-9]|[0-1][0-9]|2[0-4])$',
+            required: false
+        },
+        passwordReusePreventionCreatePolicy: {
+            name: 'Create Password Policy',
+            description: 'Whether to create a new password policy if one does not already exist.',
+            regex: '^(true|false)$',
+            required: false
+        }
+    },
     actions: {remediate: ['IAM:updateAccountPasswordPolicy'], rollback: ['IAM:updateAccountPasswordPolicy']},
     permissions: {remediate: ['iam:UpdateAccountPasswordPolicy'], rollback: ['iam:UpdateAccountPasswordPolicy']},
     compliance: {

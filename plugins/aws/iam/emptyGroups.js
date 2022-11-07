@@ -4,11 +4,24 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Empty Groups',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures all groups have at least one member',
     more_info: 'While having empty groups does not present a direct security risk, it does broaden the management landscape which could potentially introduce risks in the future.',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/Using_WorkingWithGroupsAndUsers.html',
     recommended_action: 'Remove unused groups without users',
     apis: ['IAM:listGroups', 'IAM:getGroup'],
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'getGroup',
+                property: 'Users',
+                transform: 'COUNT',
+                op: 'GT',
+                value: 0
+            }
+        ]
+    },
 
     run: function(cache, settings, callback) {
         var results = [];

@@ -4,6 +4,7 @@ const helpers = require('../../../helpers/azure');
 module.exports = {
     title: 'Key Vault Recovery Enabled',
     category: 'Key Vaults',
+    domain: 'Application Integration',
     description: 'Ensures that Purge Protection and Soft Delete are enabled on all Key Vaults',
     more_info: 'Purge Protection and Soft Delete are features that safeguard losing key access. With these setting enabled, key vaults have recovery actions available to restore deleted or compromised key vaults.',
     recommended_action: 'Once Key Vaults are created, the Azure CLI must be used to update the vault Soft Delete and Purge Protection settings.',
@@ -36,27 +37,13 @@ module.exports = {
             }
 
             vaults.data.forEach(function(vault) {
-                let vaultProperties = vault.properties;
-                let enablePurgeProtection = false;
-                let enableSoftDelete = false;
-
-                if (vaultProperties &&
-                    vaultProperties.enablePurgeProtection) {
-                    enablePurgeProtection = true;
-                }
-
-                if (vaultProperties &&
-                    vaultProperties.enableSoftDelete) {
-                    enableSoftDelete = true;
-                }
-
-                if (enablePurgeProtection && enableSoftDelete) {
+                if (vault.enablePurgeProtection && vault.enableSoftDelete) {
                     helpers.addResult(results, 0,
                         'Purge protection and soft delete are enabled for the Key Vault', location, vault.id);
                 } else {
                     let msg = [
-                        `Purge protection is ${enablePurgeProtection ? '' : 'not'} enabled.`,
-                        `Soft delete is ${enableSoftDelete ? '' : 'not'} enabled.`
+                        `Purge protection is ${vault.enablePurgeProtection ? '' : 'not'} enabled.`,
+                        `Soft delete is ${vault.enableSoftDelete ? '' : 'not'} enabled.`
                     ];
                     helpers.addResult(results, 2, msg.join(' '), location, vault.id);
                 }

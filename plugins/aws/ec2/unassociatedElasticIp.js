@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Unassociated Elastic IP Addresses',
     category: 'EC2',
+    domain: 'Compute',
     description: 'Ensures all EIPs are allocated to a resource to avoid accidental usage or reuse and to save costs',
     more_info: 'EIPs should be deleted if they are not in use to avoid extra charges.',
     recommended_action: 'Delete the unassociated Elastic IP',
@@ -25,13 +26,13 @@ module.exports = {
 
             if (!describeAddresses) return rcb();
 
-            if(describeAddresses.err || !describeAddresses.data) {
+            if (describeAddresses.err || !describeAddresses.data) {
                 helpers.addResult(results, 3,
                     `Unable to query for Elastic IP Addresses: ${helpers.addError(describeAddresses)}`, region);
                 return rcb();
             }
 
-            if(!describeAddresses.data.length) {
+            if (!describeAddresses.data.length) {
                 helpers.addResult(results, 0, 'No Elastic IP Addresses found', region);
                 return rcb();
             }
@@ -39,7 +40,7 @@ module.exports = {
             describeAddresses.data.forEach(function(elasticIp){
                 var resource = `arn:${awsOrGov}:ec2:${region}:${accountId}:eip/${elasticIp.AllocationId}`;
 
-                if(elasticIp.AssociationId) {
+                if (elasticIp.AssociationId) {
                     helpers.addResult(results, 0, `Elastic IP address ${elasticIp.AllocationId} is associated to a resource`,
                         region, resource);
                 } else {

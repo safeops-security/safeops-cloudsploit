@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'CloudFront Logging Enabled',
     category: 'CloudFront',
+    domain: 'Content Delivery',
     description: 'Ensures CloudFront distributions have request logging enabled.',
     more_info: 'Logging requests to CloudFront ' +
                'distributions is a helpful way of detecting and ' + 
@@ -19,6 +20,18 @@ module.exports = {
         pci: 'Request logging for networks hosting cardholder data is required ' +
              'for PCI. Enable CloudFront logging to log requests sent to ' +
              'applications in a PCI environment.'
+    },
+    asl: {
+        conditions: [
+            {
+                service: 'cloudfront',
+                api: 'getDistribution',
+                property: 'Distribution.DistributionConfig.Logging.Enabled',
+                transform: 'STRING',
+                op: 'EQ',
+                value: 'true'
+            }
+        ]
     },
 
     run: function(cache, settings, callback) {
@@ -48,6 +61,12 @@ module.exports = {
             var getDistribution = helpers.addSource(cache, source,
                 ['cloudfront', 'getDistribution', region, Distribution.Id]);
 
+            if (!getDistribution || getDistribution.err || !getDistribution.data || !getDistribution.data.Distribution) {
+                helpers.addResult(results, 3,
+                    `Unable to get CloudFront distribution: ${helpers.addError(getDistribution)}`);
+                return;
+            }
+    
             if (getDistribution.data &&
                 getDistribution.data.Distribution &&
                 getDistribution.data.Distribution.DistributionConfig &&

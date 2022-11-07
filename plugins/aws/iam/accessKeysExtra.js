@@ -4,12 +4,29 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Access Keys Extra',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Detects the use of more than one access key by any single user',
     more_info: 'Having more than one access key for a single user increases the chance of accidental exposure. Each account should only have one key that defines the users permissions.',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/ManagingCredentials.html',
     recommended_action: 'Remove the extra access key for the specified user.',
     apis: ['IAM:generateCredentialReport'],
-
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'generateCredentialReport',
+                property: 'access_key_1_active',
+                op: 'ISFALSE'
+            },
+            {
+                service: 'iam',
+                api: 'generateCredentialReport',
+                property: 'access_key_2_active',
+                op: 'ISFALSE',
+                logical: 'OR'
+            }
+        ]
+    },
     run: function(cache, settings, callback) {
 
         var results = [];

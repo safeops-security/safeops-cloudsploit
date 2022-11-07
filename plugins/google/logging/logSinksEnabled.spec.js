@@ -19,8 +19,14 @@ const createCache = (err, data, adata) => {
                     data: adata
                 }
             }
+        },
+        projects: {
+            get: {
+                'global': {
+                    data: [ { name: 'testproj' } ]
+                }
+            }
         }
-
     }
 };
 
@@ -30,7 +36,7 @@ describe('logSinksEnabled', function () {
         it('should give passing result if no sinks are found', function (done) {
             const callback = (err, results) => {
                 expect(results.length).to.be.above(0);
-                expect(results[0].status).to.equal(0);
+                expect(results[0].status).to.equal(2);
                 expect(results[0].message).to.include('No sinks found');
                 expect(results[0].region).to.equal('global');
                 done()

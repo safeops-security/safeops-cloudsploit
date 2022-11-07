@@ -4,11 +4,24 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'KMS Scheduled Deletion',
     category: 'KMS',
+    domain: 'Application Integration',
     description: 'Detects KMS keys that are scheduled for deletion',
     more_info: 'Deleting a KMS key will permanently prevent all data encrypted using that key from being decrypted. Avoid deleting keys unless no encrypted data is in use.',
     recommended_action: 'Disable the key deletion before the scheduled deletion time.',
     link: 'http://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html',
     apis: ['KMS:listKeys', 'KMS:describeKey'],
+    asl: {
+        conditions: [
+            {
+                service: 'kms',
+                api: 'describeKey',
+                property: 'KeyMetadata.KeyState',
+                transform: 'STRING',
+                op: 'EQ',
+                value: 'PendingDeletion'
+            }
+        ]
+    },
 
     run: function(cache, settings, callback) {
         var results = [];

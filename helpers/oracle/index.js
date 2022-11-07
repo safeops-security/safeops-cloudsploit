@@ -5,7 +5,6 @@ var govLocations = require('./regions_gov.js');
 
 var async = require('async');
 var sshpk = require('sshpk');
-var assert = require('assert-plus');
 
 // REST Oracle
 var oci = require( '../../other_modules/oci' );
@@ -51,8 +50,9 @@ function OracleExecutor(OracleConfig) {
                         }
                         try {
                             OracleConfig.privateKey = sshpk.parsePrivateKey(OracleConfig.keyValue, 'pem');
-                            assert.ok(sshpk.PrivateKey.isPrivateKey(OracleConfig.privateKey, [1, 2]),
-                                'options.key must be a sshpk.PrivateKey');
+                            if (!sshpk.PrivateKey.isPrivateKey(OracleConfig.privateKey, [1, 2])) {
+                                throw 'options.key must be a sshpk.PrivateKey';
+                            }
                             (!OracleConfig.RESTversion ? OracleConfig.RESTversion = '/20160918' : false );
                         } catch (e) {
                             console.log('Could not read the Oracle Private Key.');
@@ -93,7 +93,7 @@ function OracleExecutor(OracleConfig) {
             ociMany(callObj, OracleConfig);
         } else {
             for (var filter in callObj.filterKey){
-                if(callObj.filterLiteral && callObj.filterLiteral[filter]) {
+                if (callObj.filterLiteral && callObj.filterLiteral[filter]) {
                     parameters[callObj.filterKey[filter]] = callObj.filterValue[filter];
                 } else {
                     parameters[callObj.filterKey[filter]] = OracleConfig[callObj.filterValue[filter]];
@@ -102,8 +102,9 @@ function OracleExecutor(OracleConfig) {
 
             try {
                 OracleConfig.privateKey = sshpk.parsePrivateKey(OracleConfig.keyValue, 'pem');
-                assert.ok(sshpk.PrivateKey.isPrivateKey(OracleConfig.privateKey, [1, 2]),
-                    'options.key must be a sshpk.PrivateKey');
+                if (!sshpk.PrivateKey.isPrivateKey(OracleConfig.privateKey, [1, 2])) {
+                    throw 'options.key must be a sshpk.PrivateKey';
+                }
                 (!OracleConfig.RESTversion ? OracleConfig.RESTversion = '/20160918' : false );
 
             } catch (e) {
@@ -133,7 +134,8 @@ function OracleExecutor(OracleConfig) {
 var helpers = {
     regions: regions,
     OracleExecutor: OracleExecutor,
-    MAX_REGIONS_AT_A_TIME: 6
+    MAX_REGIONS_AT_A_TIME: 6,
+    PROTECTION_LEVELS: ['unspecified', 'default', 'cloudcmek', 'cloudhsm'],
 };
 
 for (var s in shared) helpers[s] = shared[s];

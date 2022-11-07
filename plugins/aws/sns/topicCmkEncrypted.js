@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'SNS Topic CMK Encryption',
     category: 'SNS',
+    domain: 'Application Integration',
     description: 'Ensures Amazon SNS topics are encrypted with KMS Customer Master Keys (CMKs).',
     more_info: 'AWS SNS topics should be  encrypted with KMS Customer Master Keys (CMKs) instead of AWS managed-keys' +
                'in order to have a more granular control over the SNS data-at-rest encryption and decryption process.',
@@ -56,14 +57,12 @@ module.exports = {
                         helpers.addResult(results, 2,
                             'SNS topic is using default KMS key for Server-Side Encryption',
                             region, resource);
-                    }
-                    else {
+                    } else {
                         helpers.addResult(results, 0,
                             'SNS topic is using CMK key for Server-Side Encryption',
                             region, resource);
                     }
-                }
-                else {
+                } else {
                     helpers.addResult(results, 2,
                         'Server-Side Encryption is not enabled for SNS topic',
                         region, resource);

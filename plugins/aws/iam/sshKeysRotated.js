@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'SSH Keys Rotated',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures SSH keys are not older than 180 days in order to reduce accidental exposures',
     more_info: 'SSH keys should be rotated frequently to avoid having them accidentally exposed.',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_ssh-keys.html',
@@ -93,7 +94,7 @@ module.exports = {
         }
 
         if (!found) {
-            helpers.addResult(results, 0, 'No SSH keys found');
+            helpers.addResult(results, 0, 'No SSH keys found', 'global');
         }
 
         callback(null, results, source);

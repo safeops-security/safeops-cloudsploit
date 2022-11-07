@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Root MFA Enabled',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures a multi-factor authentication device is enabled for the root account',
     more_info: 'The root account should have an MFA device setup to enable two-factor authentication.',
     link: 'http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html',
@@ -52,7 +53,9 @@ module.exports = {
             }
         }
 
-        if (!found) {
+        if (settings.govcloud && !found) {
+            helpers.addResult(results, 0, 'Root MFA is not required for AWS GovCloud');
+        } else if (!found) {
             helpers.addResult(results, 3, 'Unable to query for root user');
         }
 

@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'DynamoDB Accelerator Cluster Encryption',
     category: 'DynamoDB',
+    domain: 'Databases',
     description: 'Ensures DynamoDB Cluster Accelerator DAX clusters have encryption enabled.',
     more_info: 'DynamoDB Clusters Accelerator DAX clusters should have encryption at rest enabled to secure data from unauthorized access.',
     link: 'https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAXEncryptionAtRest.html',
@@ -37,7 +38,7 @@ module.exports = {
 
                 if (cluster.SSEDescription &&
                     cluster.SSEDescription.Status &&
-                    cluster.SSEDescription.Status === 'ENABLED') {
+                    cluster.SSEDescription.Status.toUpperCase() === 'ENABLED') {
                     helpers.addResult(results, 0,
                         'Encryption is enabled for DAX :' + cluster.ClusterName, region, resource);
                 } else {

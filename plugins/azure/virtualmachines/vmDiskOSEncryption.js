@@ -5,6 +5,7 @@ var helpers = require('../../../helpers/azure/');
 module.exports = {
     title: 'VM OS Disk Encryption',
     category: 'Virtual Machines',
+    domain: 'Compute',
     description: 'Ensures that VM OS Disk Encryption is enabled for virtual machines',
     more_info: 'Encrypting VM OS disks (boot volume) ensures that the entire contents are fully unrecoverable without a key, protecting the volume from unwarranted reads.',
     recommended_action: 'Enable VM OS Disk Encryption on all virtual machines',
@@ -36,7 +37,7 @@ module.exports = {
                 helpers.addResult(results, 0, 'No existing disks found', location);
             } else {
                 var found = false;
-                for(var i in disks.data) {
+                for (var i in disks.data) {
                     var disk = disks.data[i];
                     if (disk.name &&
                         disk.name.length &&

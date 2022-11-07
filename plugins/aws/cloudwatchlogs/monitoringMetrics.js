@@ -63,6 +63,7 @@ var filterPatterns = [
 module.exports = {
     title: 'CloudWatch Monitoring Metrics',
     category: 'CloudWatchLogs',
+    domain: 'Compliance',
     description: 'Ensures metric filters are setup for CloudWatch logs to detect security risks from CloudTrail.',
     more_info: 'Sending CloudTrail logs to CloudWatch is only useful if metrics are setup to detect risky activity from those logs. There are numerous metrics that should be used. For the exact filter patterns, please see this plugin on GitHub: https://github.com/cloudsploit/scans/blob/master/plugins/aws/cloudwatchlogs/monitoringMetrics.js',
     recommended_action: 'Enable metric filters to detect malicious activity in CloudTrail logs sent to CloudWatch.',
@@ -81,8 +82,17 @@ module.exports = {
             var describeTrails = helpers.addSource(cache, source,
                 ['cloudtrail', 'describeTrails', region]);
 
-            if (!describeTrails || describeTrails.err ||
-                !describeTrails.data || !describeTrails.data.length) {
+            if (!describeTrails) return rcb();
+            
+            if (describeTrails.err || !describeTrails.data) {
+                helpers.addResult(results, 3,
+                    `Unable to describe CloudTrail trails: ${helpers.addError(describeTrails)}`, region);
+                return rcb();
+            }
+
+            if (!describeTrails.data.length) {
+                helpers.addResult(results, 0,
+                    'No CloudTrail trails found', region);
                 return rcb();
             }
 
@@ -95,7 +105,11 @@ module.exports = {
                 }
             }
 
-            if (!trailsInRegion.length) return rcb();
+            if (!trailsInRegion.length) {
+                helpers.addResult(results, 0,
+                    'No CloudTrail trails found in current home region', region);
+                return rcb();
+            }
 
             var describeMetricFilters = helpers.addSource(cache, source,
                 ['cloudwatchlogs', 'describeMetricFilters', region]);
@@ -104,14 +118,12 @@ module.exports = {
                 describeMetricFilters.err || !describeMetricFilters.data) {
                 helpers.addResult(results, 3,
                     'Unable to query for CloudWatchLogs metric filters: ' + helpers.addError(describeMetricFilters), region);
-
                 return rcb();
             }
 
             if (!describeMetricFilters.data.length) {
                 helpers.addResult(results, 2,
                     'There are no CloudWatch metric filters in this region', region);
-
                 return rcb();
             }
 

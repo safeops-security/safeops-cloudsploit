@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'RDS Logging Enabled',
     category: 'RDS',
+    domain: 'Databases',
     description: 'Ensures logging is configured for RDS instances',
     more_info: 'Logging database level events enables teams to analyze events for the purpose diagnostics as well as audit tracking for compliance purposes.',
     link: 'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html',
@@ -56,8 +57,7 @@ module.exports = {
                     var matchingDBEngineVersions = eligibleDBEngineVersions.filter(function(dbEngine) {
                         return dbEngine.Engine === db.Engine && dbEngine.EngineVersion === db.EngineVersion;
                     });
-                    if (matchingDBEngineVersions.length)
-                    {
+                    if (matchingDBEngineVersions.length) {
                         helpers.addResult(results, 2, 'Logging is not enabled', region, dbResource);
                     } else {
                         helpers.addResult(results, 0, 'Logging is not enabled, but cannot be enabled', region, dbResource);

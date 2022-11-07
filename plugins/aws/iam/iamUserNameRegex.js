@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'IAM Username Matches Regex',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures all IAM user names match the given regex',
     more_info: 'Many organizational policies require IAM user names to follow a common naming convention. This check ensures these conventions are followed.',
     recommended_action: 'Rename the IAM user name to match the provided regex.',
@@ -16,6 +17,18 @@ module.exports = {
             regex: '^.*$',
             default: '^.*$',
         },
+    },
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'generateCredentialReport',
+                property: 'user',
+                transform: 'STRING',
+                op: 'MATCHES',
+                value: '^.*$'
+            }
+        ]
     },
 
     run: function(cache, settings, callback) {

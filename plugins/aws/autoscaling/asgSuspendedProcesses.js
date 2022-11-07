@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Suspended AutoScaling Groups',
     category: 'AutoScaling',
+    domain: 'Availability',
     description: 'Ensures that there are no Amazon AutoScaling groups with suspended processes.',
     more_info: 'AutoScaling groups should not have any suspended processes to avoid disrupting the AutoScaling workflow.',
     link: 'https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html',
@@ -37,8 +38,7 @@ module.exports = {
                     helpers.addResult(results, 0,
                         `AutoScaling group "${asg.AutoScalingGroupName}" does not have any suspended processes`,
                         region, asg.AutoScalingGroupARN);
-                }
-                else {
+                } else {
                     var suspendedProcesses = [];
                     asg.SuspendedProcesses.forEach(function(process) {
                         suspendedProcesses.push(process.ProcessName);

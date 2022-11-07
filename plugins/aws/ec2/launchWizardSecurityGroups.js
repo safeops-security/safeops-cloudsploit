@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'EC2 LaunchWizard Security Groups',
     category: 'EC2',
+    domain: 'Compute',
     description: 'Ensures security groups created by the EC2 launch wizard are not used',
     more_info: 'The EC2 launch wizard frequently creates insecure security groups that are exposed publicly. These groups should not be used and custom security groups should be created instead.',
     link: 'https://docs.aws.amazon.com/launchwizard/latest/userguide/launch-wizard-sap-security-groups.html',
@@ -36,7 +37,7 @@ module.exports = {
                 var sg = describeSecurityGroups.data[s];
                 var resource = 'arn:aws:ec2:' + region + ':' + sg.OwnerId + ':security-group/' + sg.GroupId;
 
-                if(!sg.GroupName) {
+                if (!sg.GroupName) {
                     helpers.addResult(results, 2,
                         'Unable to get group name of security group',
                         region, resource);

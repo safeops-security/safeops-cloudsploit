@@ -3,6 +3,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Maximum Password Age',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Ensures password policy requires passwords to be reset every 180 days',
     more_info: 'A strong password policy enforces minimum length, expirations, reuse, and symbol usage',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/Using_ManagingPasswordPolicies.html',
@@ -11,6 +12,20 @@ module.exports = {
     remediation_description: 'The password policy for maximum password age will be set to the value set by the user. Otherwise, it will default to 179.',
     remediation_min_version: '202006221808',
     apis_remediate: ['IAM:getAccountPasswordPolicy'],
+    remediation_inputs: {
+        maxPasswordAge: {
+            name: '(Optional) Maximum Password Age',
+            description: 'The maximum age of passwords to allow in the account policy 1-1095',
+            regex: '^([1-9][0-9]{0,2}|10[0-9][0-5])$',
+            required: false
+        },
+        maxPasswordAgeCreatePolicy: {
+            name: 'Create Password Policy',
+            description: 'Whether to create a new password policy if one does not already exist.',
+            regex: '^(true|false)$',
+            required: false
+        }
+    },
     actions: {remediate: ['IAM:updateAccountPasswordPolicy'], rollback: ['IAM:updateAccountPasswordPolicy']},
     permissions: {remediate: ['iam:UpdateAccountPasswordPolicy'], rollback: ['iam:UpdateAccountPasswordPolicy']},
     compliance: {
@@ -31,7 +46,18 @@ module.exports = {
             default: 180
         }
     },
-
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'getAccountPasswordPolicy',
+                property: 'MaxPasswordAge',
+                transform: 'INTEGER',
+                op: 'GT',
+                value: 90
+            }
+        ]
+    },
     run: function(cache, settings, callback) {
         var config = {
             max_password_age_fail: settings.max_password_age_fail || this.settings.max_password_age_fail.default,
@@ -69,11 +95,11 @@ module.exports = {
         if (!passwordPolicy.MaxPasswordAge) {
             helpers.addResult(results, 2, 'Password policy does not specify a maximum password age');
         } else if (passwordPolicy.MaxPasswordAge > config.max_password_age_fail) {
-            helpers.addResult(results, 2, 'Maximum password age of: ' + passwordPolicy.MaxPasswordAge + ' days is more than one year', 'global', null, custom);
+            helpers.addResult(results, 2, `Maximum password age of: ${passwordPolicy.MaxPasswordAge} days is more than ${config.max_password_age_fail}`, 'global', null, custom);
         } else if (passwordPolicy.MaxPasswordAge > config.max_password_age_warn) {
-            helpers.addResult(results, 1, 'Maximum password age of: ' + passwordPolicy.MaxPasswordAge + ' days is more than six months', 'global', null, custom);
+            helpers.addResult(results, 1, `Maximum password age of: ${passwordPolicy.MaxPasswordAge} days is more than ${config.max_password_age_warn}`, 'global', null, custom);
         } else {
-            helpers.addResult(results, 0, 'Maximum password age of: ' + passwordPolicy.MaxPasswordAge + ' days is suitable', 'global', null, custom);
+            helpers.addResult(results, 0, `Maximum password age of: ${passwordPolicy.MaxPasswordAge} days is suitable`, 'global', null, custom);
         }
 
         callback(null, results, source);

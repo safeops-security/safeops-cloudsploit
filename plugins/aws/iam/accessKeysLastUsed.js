@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'Access Keys Last Used',
     category: 'IAM',
+    domain: 'Identity and Access management',
     description: 'Detects access keys that have not been used for a period of time and that should be decommissioned',
     more_info: 'Having numerous, unused access keys extends the attack surface. Access keys should be removed if they are no longer being used.',
     link: 'http://docs.aws.amazon.com/IAM/latest/UserGuide/ManagingCredentials.html',
@@ -27,6 +28,18 @@ module.exports = {
             regex: '^[1-9]{1}[0-9]{0,3}$',
             default: 90
         }
+    },
+    asl: {
+        conditions: [
+            {
+                service: 'iam',
+                api: 'generateCredentialReport',
+                property: 'access_key_1_last_used_date',
+                transform: 'DAYSFROM',
+                op: 'GT',
+                value: 90
+            }
+        ]
     },
 
     run: function(cache, settings, callback) {

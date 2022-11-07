@@ -4,6 +4,7 @@ var helpers = require('../../../helpers/aws');
 module.exports = {
     title: 'RDS Automated Backups',
     category: 'RDS',
+    domain: 'Databases',
     description: 'Ensures automated backups are enabled for RDS instances',
     more_info: 'AWS provides a simple method of backing up RDS instances at a regular interval. This should be enabled to provide an option for restoring data in the event of a database compromise or hardware failure.',
     link: 'http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html',
@@ -51,7 +52,7 @@ module.exports = {
                 var db = describeDBInstances.data[i];
                 var dbResource = db.DBInstanceArn;
 
-                // skip if it is read only replica Source Indentifier for PostgreSQL
+                // skip if it is read only replica Source Identifier for PostgreSQL
                 if (db.Engine === 'postgresql' && db.ReadReplicaSourceDBInstanceIdentifier){
                     continue;
                 }

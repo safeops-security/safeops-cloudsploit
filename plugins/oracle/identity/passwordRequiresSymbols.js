@@ -1,9 +1,9 @@
-var async = require('async');
 var helpers = require('../../../helpers/oracle');
 
 module.exports = {
     title: 'Password Requires Symbols',
     category: 'Identity',
+    domain: 'Identity and Access Management',
     description: 'Ensures password policy requires at least one symbol.',
     more_info: 'A strong password policy enforces minimum length, expiration, reuse, and symbol usage.',
     link: 'https://docs.cloud.oracle.com/iaas/Content/Identity/Tasks/managingpasswordrules.htm',
@@ -16,16 +16,8 @@ module.exports = {
     run: function(cache, settings, callback) {
         var results = [];
         var source = {};
-        var defaultRegion = '';
 
-        if (cache.authenticationPolicy &&
-            cache.authenticationPolicy.get &&
-            Object.keys(cache.authenticationPolicy.get).length &&
-            Object.keys(cache.authenticationPolicy.get).length > 0) {
-            defaultRegion = helpers.objectFirstKey(cache.authenticationPolicy.get);
-        } else {
-            return callback(null, results, source);
-        }
+        var defaultRegion = helpers.objectFirstKey(cache['regionSubscription']['list']);
 
         var authenticationPolicy = helpers.addSource(cache, source,
             ['authenticationPolicy', 'get', defaultRegion]);
